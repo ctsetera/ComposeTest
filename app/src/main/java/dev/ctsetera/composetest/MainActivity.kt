@@ -15,15 +15,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -52,47 +56,14 @@ fun MainActivityContent() {
             Row(
                 modifier = Modifier
                     .padding(innerPadding)
-                    .padding(8.dp)
             ) {
-                // 画像を表示する
-                Image(
-                    painter = painterResource(R.drawable.icon),
-                    contentDescription = "Contact profile picture",
-                    modifier = Modifier
-                        .size(100.dp)
-                        .clip(CircleShape)
-                )
-
-                // 空白を挿入（Layout XMLでいうところのMargin Start, Margin End）
-                Spacer(modifier = Modifier.width(8.dp))
-
-                // Column -> 縦方向に整列できるよ
-                Column {
-                    Greeting(
-                        name = "Android",
-                        // modifier = Modifier.padding(innerPadding)
-                    )
-                    Greeting(
-                        name = "iOS",
-                        // modifier = Modifier.padding(innerPadding)
-                    )
-                    // 空白を挿入（Layout XMLでいうところのMargin Top, Margin Bottom）
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Greeting(
-                        name = "Windows",
-                        // modifier = Modifier.padding(innerPadding)
-                    )
-                    Greeting(
-                        name = "macOS",
-                        // modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                ProfileContent()
             }
         }
     }
 }
 
-// TopAppBar
+// TopBar
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar() {
@@ -101,17 +72,67 @@ fun TopBar() {
             Box { Text("Top App Bar") }
         },
         colors = TopAppBarDefaults
-            .topAppBarColors(containerColor = colorResource(R.color.teal_700))
+            .topAppBarColors(containerColor = MaterialTheme.colorScheme.primary)
     )
 }
 
-// Compose可能な関数は、関数名に`Composable`アノテーションを追加するだけで作成できます
+// Profile Content
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
+fun ProfileContent(isExpanded: Boolean = false) {
+    // Jetpack Composeのrememberは、コンポーザブル関数内で状態を保持するために非常に重要な関数です
+    val expandedState: MutableState<Boolean> = remember { mutableStateOf(isExpanded) }
+
+    Row(modifier = Modifier.padding(8.dp)) {
+        Column {
+            // 画像を表示する
+            Image(
+                painter = painterResource(R.drawable.icon),
+                contentDescription = "Contact profile picture",
+                modifier = Modifier
+                    .size(100.dp)
+                    .clip(CircleShape)
+            )
+        }
+
+        // 幅8dpの空白を挿入
+        Spacer(modifier = Modifier.width(8.dp))
+
+        // Column -> 縦方向に整列できるよ
+        Column {
+            Column {
+                Row {
+                    Column(modifier = Modifier.weight(1f)) {
+                        // 備考: Typographyは自分で設定できる 詳細はTypeを参照
+
+                        Text(
+                            text = "Your Name",
+                            style = MaterialTheme.typography.titleLarge,
+                        )
+                        Text(
+                            text = "@your_id",
+                            style = MaterialTheme.typography.titleSmall
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Button(onClick = {
+                        expandedState.value = !expandedState.value
+                    }) {
+                        Text(text = if (expandedState.value) "Show less" else "Show more")
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            if (expandedState.value) {
+                Text(
+                    text = "Your description.\n".repeat(4),
+                )
+            }
+        }
+    }
 }
 
 // `@Preview`アノテーションを使用すると、Android Studio内でコンポーズ可能な関数をプレビューできます
@@ -124,8 +145,17 @@ fun MainActivityPreview() {
 // `@Preview`アノテーションを使用すると、Android Studio内でコンポーズ可能な関数をプレビューできます
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun ProfileContentPreview() {
     ComposeTestTheme {
-        Greeting("Preview")
+        ProfileContent(isExpanded = false)
+    }
+}
+
+// `@Preview`アノテーションを使用すると、Android Studio内でコンポーズ可能な関数をプレビューできます
+@Preview(showBackground = true)
+@Composable
+fun ProfileContentPreviewExpanded() {
+    ComposeTestTheme {
+        ProfileContent(isExpanded = true)
     }
 }
