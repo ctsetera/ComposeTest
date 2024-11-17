@@ -17,7 +17,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,8 +40,14 @@ fun MainActivityContent(isShouldShowOnboarding: Boolean = true) {
     /*
     コンポーズ可能な関数では、複数の関数によって読み取られるか変更される状態は、共通の祖先に配置される必要があります。
     そのためのプロセスを状態ホイスティングと呼びます。「ホイストする」とは、「持ち上げる」「昇格させる」といった意味です。
-     */
-    var shouldShowOnboarding by remember { mutableStateOf(isShouldShowOnboarding) }
+
+    remember の代わりに rememberSaveable を使用できます
+    そうすれば、個々の状態が保存され、構成の変更（回転など）やプロセスの終了後も保持されます。
+    */
+    var shouldShowOnboarding by rememberSaveable { mutableStateOf(isShouldShowOnboarding) }
+
+    // Jetpack Composeのrememberは、コンポーザブル関数内で状態を保持するために非常に重要な関数です
+    //var shouldShowOnboarding by remember { mutableStateOf(isShouldShowOnboarding) }
 
     // ComposeTestThemeはTheme.ktで定義しているみたいだよ
     ComposeTestTheme {
