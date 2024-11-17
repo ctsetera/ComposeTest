@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -19,18 +20,21 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.ctsetera.composetest.ui.screen.OnboardingScreen
 import dev.ctsetera.composetest.ui.theme.ComposeTestTheme
 
 class MainActivity : ComponentActivity() {
@@ -45,6 +49,12 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainActivityContent() {
+    /*
+    コンポーズ可能な関数では、複数の関数によって読み取られるか変更される状態は、共通の祖先に配置される必要があります。
+    そのためのプロセスを状態ホイスティングと呼びます。「ホイストする」とは、「持ち上げる」「昇格させる」といった意味です。
+     */
+    var shouldShowOnboarding by remember { mutableStateOf(true) }
+
     // ComposeTestThemeはTheme.ktで定義しているみたいだよ
     ComposeTestTheme {
         // Scaffold -> 土台
@@ -52,12 +62,16 @@ fun MainActivityContent() {
             topBar = { TopBar() },
             modifier = Modifier.fillMaxSize(),
         ) { innerPadding ->
-            // Row -> 横方向に整列できるよ
-            Row(
-                modifier = Modifier
-                    .padding(innerPadding)
+            Surface(
+                modifier = Modifier.padding(innerPadding)
             ) {
-                ProfileContent()
+                if (shouldShowOnboarding) {
+                    OnboardingScreen(onContinueClicked = {
+                        shouldShowOnboarding = false
+                    })
+                } else {
+                    ProfileContent()
+                }
             }
         }
     }
@@ -80,8 +94,9 @@ fun TopBar() {
 @Composable
 fun ProfileContent(isExpanded: Boolean = false) {
     // Jetpack Composeのrememberは、コンポーザブル関数内で状態を保持するために非常に重要な関数です
-    val expandedState: MutableState<Boolean> = remember { mutableStateOf(isExpanded) }
+    var expandedState by remember { mutableStateOf(isExpanded) }
 
+    // Row -> 横方向に整列できるよ
     Row(modifier = Modifier.padding(8.dp)) {
         Column {
             // 画像を表示する
@@ -107,28 +122,31 @@ fun ProfileContent(isExpanded: Boolean = false) {
                         Text(
                             text = "Your Name",
                             style = MaterialTheme.typography.titleLarge,
+                            modifier = Modifier.fillMaxWidth(),
                         )
                         Text(
                             text = "@your_id",
-                            style = MaterialTheme.typography.titleSmall
+                            style = MaterialTheme.typography.titleSmall,
+                            modifier = Modifier.fillMaxWidth(),
                         )
                     }
 
                     Spacer(modifier = Modifier.width(8.dp))
 
                     Button(onClick = {
-                        expandedState.value = !expandedState.value
+                        expandedState = !expandedState
                     }) {
-                        Text(text = if (expandedState.value) "Show less" else "Show more")
+                        Text(text = if (expandedState) "Show less" else "Show more")
                     }
                 }
             }
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            if (expandedState.value) {
+            if (expandedState) {
                 Text(
                     text = "Your description.\n".repeat(4),
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
         }
