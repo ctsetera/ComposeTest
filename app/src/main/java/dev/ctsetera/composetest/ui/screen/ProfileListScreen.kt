@@ -1,5 +1,8 @@
 package dev.ctsetera.composetest.ui.screen
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,10 +13,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -77,12 +81,9 @@ fun ProfileListScreen() {
 // Profile List
 @Composable
 fun ProfileList(profileList: List<ProfileItem>) {
-    LazyColumn {
-        itemsIndexed(items = profileList) { index, item ->
-            ProfileContent(
-                profile = item,
-                isFirstItem = index == 0
-            )
+    LazyColumn(modifier = Modifier.padding(vertical = 4.dp)) {
+        items(items = profileList) { item ->
+            ProfileContent(profile = item)
         }
     }
 }
@@ -92,7 +93,6 @@ fun ProfileList(profileList: List<ProfileItem>) {
 fun ProfileContent(
     profile: ProfileItem,
     isExpanded: Boolean = false,
-    isFirstItem: Boolean = true,
 ) {
     /*
     remember の代わりに rememberSaveable を使用できます
@@ -103,69 +103,76 @@ fun ProfileContent(
     // Jetpack Composeのrememberは、コンポーザブル関数内で状態を保持するために非常に重要な関数です
     // var expandedState by remember { mutableStateOf(isExpanded) }
 
-    // Row -> 横方向に整列できるよ
-    Row(
-        modifier = if (isFirstItem) {
-            Modifier.padding(8.dp)
-        } else {
-            Modifier.padding(
-                top = 0.dp,
-                start = 8.dp,
-                end = 8.dp,
-                bottom = 8.dp
-            )
-        }
+    // Surface -> 色を決めるよ
+    Surface(
+        color = MaterialTheme.colorScheme.secondaryContainer,
+        modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
     ) {
-        Column {
-            // 画像を表示する
-            Image(
-                painter = profile.icon,
-                contentDescription = "Contact profile picture",
-                modifier = Modifier
-                    .size(100.dp)
-                    .clip(CircleShape)
-            )
-        }
 
-        // 幅8dpの空白を挿入
-        Spacer(modifier = Modifier.width(8.dp))
-
-        // Column -> 縦方向に整列できるよ
-        Column {
+        // Row -> 横方向に整列できるよ
+        Row(
+            modifier = Modifier
+                .padding(8.dp)
+                // このコンテンツのサイズが変更されたときのアニメーションを設定する
+                // 以下の場合、バネで跳ねたかのようなアニメーションとなる
+                .animateContentSize(
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioLowBouncy, // バネの減衰比
+                        stiffness = Spring.StiffnessMedium, // バネの硬さ
+                    )
+                ),
+        ) {
             Column {
-                Row {
-                    Column(modifier = Modifier.weight(1f)) {
-                        // 備考: Typographyは自分で設定できる 詳細はTypeを参照
-
-                        Text(
-                            text = profile.name,
-                            style = MaterialTheme.typography.titleLarge,
-                            modifier = Modifier.fillMaxWidth(),
-                        )
-                        Text(
-                            text = profile.id,
-                            style = MaterialTheme.typography.titleSmall,
-                            modifier = Modifier.fillMaxWidth(),
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    Button(onClick = {
-                        expandedState = !expandedState
-                    }) {
-                        Text(text = if (expandedState) "Show less" else "Show more")
-                    }
-                }
+                // 画像を表示する
+                Image(
+                    painter = profile.icon,
+                    contentDescription = "Contact profile picture",
+                    modifier = Modifier
+                        .size(100.dp)
+                        .clip(CircleShape)
+                )
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            // 幅8dpの空白を挿入
+            Spacer(modifier = Modifier.width(8.dp))
 
-            if (expandedState) {
-                Text(
-                    text = profile.description,
-                    modifier = Modifier.fillMaxWidth(),
-                )
+            // Column -> 縦方向に整列できるよ
+            Column {
+                Column {
+                    Row {
+                        Column(modifier = Modifier.weight(1f)) {
+                            // 備考: Typographyは自分で設定できる 詳細はTypeを参照
+
+                            Text(
+                                text = profile.name,
+                                style = MaterialTheme.typography.titleLarge,
+                                modifier = Modifier.fillMaxWidth(),
+                            )
+                            Text(
+                                text = profile.id,
+                                style = MaterialTheme.typography.titleSmall,
+                                modifier = Modifier.fillMaxWidth(),
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        Button(onClick = {
+                            expandedState = !expandedState
+                        }) {
+                            Text(text = if (expandedState) "Show less" else "Show more")
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                if (expandedState) {
+                    Text(
+                        text = profile.description,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             }
         }
     }
