@@ -20,7 +20,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import dev.ctsetera.composetest.ui.screen.OnboardingScreen
 import dev.ctsetera.composetest.ui.screen.ProfileListScreen
 import dev.ctsetera.composetest.ui.theme.ComposeTestTheme
@@ -84,15 +84,13 @@ fun TopBar() {
     )
 }
 
-// `@Preview`アノテーションを使用すると、Android Studio内でコンポーズ可能な関数をプレビューできます
-@Preview(showBackground = true)
+@PreviewLightDark
 @Composable
 fun MainActivityPreviewShouldShowOnboarding() {
     MainActivityContent(isShouldShowOnboarding = true)
 }
 
-// `@Preview`アノテーションを使用すると、Android Studio内でコンポーズ可能な関数をプレビューできます
-@Preview(showBackground = true)
+@PreviewLightDark
 @Composable
 fun MainActivityPreview() {
     MainActivityContent(isShouldShowOnboarding = false)
