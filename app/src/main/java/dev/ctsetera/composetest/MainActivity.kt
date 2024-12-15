@@ -7,7 +7,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -54,6 +58,17 @@ fun MainActivityContent(isShouldShowOnboarding: Boolean = true) {
         // Scaffold -> 土台
         Scaffold(
             topBar = { TopBar() },
+            floatingActionButton = {
+                if (shouldShowOnboarding) {
+                    //
+                } else {
+                    FloatingActionButton(
+                        onClick = { },
+                    ) {
+                        Icon(Icons.Filled.Add, "Floating action button.")
+                    }
+                }
+            },
             modifier = Modifier.fillMaxSize(),
         ) { innerPadding ->
             Surface(

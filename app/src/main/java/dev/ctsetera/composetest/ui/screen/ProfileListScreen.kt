@@ -196,33 +196,3 @@ fun ProfileListScreenPreview() {
         ProfileListScreen()
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun ProfileContentPreview() {
-    ComposeTestTheme {
-        ProfileContent(
-            profile = ProfileItem(
-                id = "@your_id",
-                name = "Your Name",
-                description = "Your description.\n".repeat(4),
-                icon = painterResource(R.drawable.icon),
-            ), isExpanded = false
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ProfileContentPreviewExpanded() {
-    ComposeTestTheme {
-        ProfileContent(
-            profile = ProfileItem(
-                id = "@your_id",
-                name = "Your Name",
-                description = "Your description.\n".repeat(4),
-                icon = painterResource(R.drawable.icon),
-            ), isExpanded = true
-        )
-    }
-}
