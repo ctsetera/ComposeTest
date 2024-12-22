@@ -24,71 +24,46 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.ctsetera.composetest.R
+import dev.ctsetera.composetest.ui.model.UserModel
 import dev.ctsetera.composetest.ui.theme.ComposeTestTheme
-
-data class ProfileItem(
-    val id: String,
-    val name: String,
-    val description: String,
-    val icon: Painter,
-)
+import dev.ctsetera.composetest.ui.viewmodel.ProfileListViewModel
 
 @Composable
 fun ProfileListScreen() {
-    val profileList = listOf(
-        ProfileItem(
-            id = "@potofu",
-            name = "霜月ポトフ",
-            description = buildString {
-                append("ニコニコ生放送でお絵かき配信をしているpepepeさんのオリジナルキャラクター。")
-                append("pepepeさんがフォトショップのフリーズにも負けずに書き上げたpepepeさんの妹である。")
-                append("ポトフちゃんはハーフだがpepepeさんはハーフではない。ふしぎ！")
-                append("おとなしくてSな照れ屋でひきこもりぎみで、家でお絵かき配信をしたり、同人サークルで稼いでいるらしい。")
-                append("ちなみにぱんつはくまさんぱんつ。")
-                append("最近お父さんが保護してきたワトラちゃんという友達が増えた。やったね！ポトフちゃん！")
-                append("配信ではポトフちゃんが絵を描き、ワトラちゃんはモデル、pepepeさんがおしゃべりを担当との事。")
-                append("お父さん（フランス人）も一緒に住んでおり、リストラ朝スーツを着て出かけて公園のベンチでボーっとして夜に帰ってくる仕事をしている。なお、お父さんはシャイで家族間の会話もメールで行っている。")
-                append("お母さん（日本人）は物心ついたときには家におらず、生活費はかかさず送られてきている模様。")
-                append("pepepeさん曰くどんどん描いてもいいのよ?との事。れっつどろーいんぐ！")
-            },
-            icon = painterResource(R.drawable.icon_potofu),
-        ),
-        ProfileItem(
-            id = "@watora",
-            name = "葉月ワトラ",
-            description = buildString {
-                append("pepepe（絵師）さんのオリジナルキャラクター。")
-                append("設定：")
-                append("赤髪のツインテール。アホ毛が生えていて、Ｗ形の髪飾りを付けている。")
-                append("性格はぶっきらぼうな感じ。父は鳥取、母は島根県出身。")
-                append("リアル草食系。裸パーカーのチャックは壊れている。　一人称はワタイ。")
-                append("生放送でワロタをワトラと打ち間違えたコメントがどんどん広がり、とうとうキャラクターになってしまった。ワトラｗｗｗｗｗｗ")
-            },
-            icon = painterResource(R.drawable.icon_watora)
-        ),
-    )
+    var isOpened by rememberSaveable { mutableStateOf(false) }
 
-    ProfileList(profileList = profileList)
+    val viewModel = viewModel<ProfileListViewModel>(factory = ProfileListViewModel.Factory)
+    val userList by viewModel.userList.collectAsState()
+
+    ProfileList(profileList = userList)
+
+    if (!isOpened) {
+        viewModel.getUserList()
+    }
+
+    isOpened = true
 }
 
 // Profile List
 @Composable
-fun ProfileList(profileList: List<ProfileItem>) {
+fun ProfileList(profileList: List<UserModel>) {
     LazyColumn(modifier = Modifier.padding(vertical = 4.dp)) {
         items(items = profileList) { item ->
-            ProfileContent(profile = item)
+            ProfileContent(user = item)
         }
     }
 }
@@ -96,7 +71,7 @@ fun ProfileList(profileList: List<ProfileItem>) {
 // Profile Content
 @Composable
 fun ProfileContent(
-    profile: ProfileItem,
+    user: UserModel,
     isExpanded: Boolean = false,
 ) {
     /*
@@ -129,13 +104,23 @@ fun ProfileContent(
         ) {
             Column {
                 // 画像を表示する
-                Image(
-                    painter = profile.icon,
-                    contentDescription = "Contact profile picture",
-                    modifier = Modifier
-                        .size(100.dp)
-                        .clip(CircleShape)
-                )
+                if (user.icon == null) {
+                    Image(
+                        painter = painterResource(R.drawable.icon_default),
+                        contentDescription = "Contact profile picture",
+                        modifier = Modifier
+                            .size(100.dp)
+                            .clip(CircleShape)
+                    )
+                } else {
+                    Image(
+                        bitmap = user.icon.asImageBitmap(),
+                        contentDescription = "Contact profile picture",
+                        modifier = Modifier
+                            .size(100.dp)
+                            .clip(CircleShape)
+                    )
+                }
             }
 
             // 幅8dpの空白を挿入
@@ -149,12 +134,12 @@ fun ProfileContent(
                             // 備考: Typographyは自分で設定できる 詳細はTypeを参照
 
                             Text(
-                                text = profile.name,
+                                text = user.name,
                                 style = MaterialTheme.typography.titleLarge,
                                 modifier = Modifier.fillMaxWidth(),
                             )
                             Text(
-                                text = profile.id,
+                                text = user.id,
                                 style = MaterialTheme.typography.titleSmall,
                                 modifier = Modifier.fillMaxWidth(),
                             )
@@ -180,7 +165,7 @@ fun ProfileContent(
 
                 if (expandedState) {
                     Text(
-                        text = profile.description,
+                        text = user.description ?: "",
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
@@ -191,8 +176,26 @@ fun ProfileContent(
 
 @Preview(showBackground = true)
 @Composable
-fun ProfileListScreenPreview() {
+fun ProfileListPreview() {
+    val userList: ArrayList<UserModel> = arrayListOf()
+    for (i in 1..3) {
+        userList.add(
+            UserModel(
+                uid = 0,
+                id = "@dummy_user_$i",
+                name = "Dummy User $i",
+                description = buildString {
+                    append("I'm Dummy $i!\n".repeat(4))
+                    append("I'm Dummy $i!")
+                },
+                icon = null,
+            ),
+        )
+    }
+
     ComposeTestTheme {
-        ProfileListScreen()
+        ProfileList(
+            profileList = userList
+        )
     }
 }

@@ -40,7 +40,9 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MainActivityContent(isShouldShowOnboarding: Boolean = true) {
+fun MainActivityContent(
+    isShouldShowOnboarding: Boolean = true,
+) {
     /*
     コンポーズ可能な関数では、複数の関数によって読み取られるか変更される状態は、共通の祖先に配置される必要があります。
     そのためのプロセスを状態ホイスティングと呼びます。「ホイストする」とは、「持ち上げる」「昇格させる」といった意味です。
