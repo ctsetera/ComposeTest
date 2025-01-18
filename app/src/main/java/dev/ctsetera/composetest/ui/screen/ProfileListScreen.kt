@@ -1,5 +1,6 @@
 package dev.ctsetera.composetest.ui.screen
 
+import android.widget.Toast
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
@@ -32,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,22 +42,35 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.ctsetera.composetest.R
 import dev.ctsetera.composetest.model.UserModel
 import dev.ctsetera.composetest.ui.theme.ComposeTestTheme
-import dev.ctsetera.composetest.viewmodel.ProfileListViewModel
+import dev.ctsetera.composetest.viewmodel.screen.ProfileListViewModel
 
 @Composable
 fun ProfileListScreen() {
     var isOpened by rememberSaveable { mutableStateOf(false) }
 
     val viewModel = viewModel<ProfileListViewModel>(factory = ProfileListViewModel.Factory)
-    val userList by viewModel.userList.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
-    ProfileList(profileList = userList)
+    ProfileList(profileList = uiState.userList)
 
     if (!isOpened) {
         viewModel.getUserList()
     }
 
     isOpened = true
+
+    // I/O実行時のエラーメッセージがあれば表示する（この画面ではUserListのロード）
+    if (uiState.ioErrorMessage.isNotEmpty()) {
+        uiState.ioErrorMessage.forEach { (errorMessageId, params) ->
+            val errorMessage = if (params.isEmpty()) {
+                stringResource(errorMessageId)
+            } else {
+                stringResource(errorMessageId, params)
+            }
+
+            Toast.makeText(LocalContext.current, errorMessage, Toast.LENGTH_LONG).show()
+        }
+    }
 }
 
 // Profile List

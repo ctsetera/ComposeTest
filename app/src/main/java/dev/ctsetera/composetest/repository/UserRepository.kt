@@ -16,7 +16,7 @@ class UserRepository(context: Context) {
         AppDatabase::class.java, "database-name"
     ).build()
 
-    fun getUser(): List<UserModel> {
+    fun getUserList(): List<UserModel> {
         val users = db.userDao().getAll()
 
         return users.map {
