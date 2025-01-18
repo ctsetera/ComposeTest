@@ -1,4 +1,4 @@
-package dev.ctsetera.composetest.ui.viewmodel
+package dev.ctsetera.composetest.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
@@ -9,8 +9,8 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import dev.ctsetera.composetest.ui.model.UserModel
-import dev.ctsetera.composetest.ui.repository.UserRepository
+import dev.ctsetera.composetest.model.UserModel
+import dev.ctsetera.composetest.repository.UserRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

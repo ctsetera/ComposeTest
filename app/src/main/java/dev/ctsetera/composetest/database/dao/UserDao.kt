@@ -1,10 +1,10 @@
-package dev.ctsetera.composetest.ui.database.dao
+package dev.ctsetera.composetest.database.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import dev.ctsetera.composetest.ui.database.entitiy.UserEntity
+import dev.ctsetera.composetest.database.entitiy.UserEntity
 
 @Dao
 interface UserDao {

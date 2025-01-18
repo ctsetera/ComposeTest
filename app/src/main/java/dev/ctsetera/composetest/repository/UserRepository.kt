@@ -1,12 +1,12 @@
-package dev.ctsetera.composetest.ui.repository
+package dev.ctsetera.composetest.repository
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.room.Room
-import dev.ctsetera.composetest.ui.database.AppDatabase
-import dev.ctsetera.composetest.ui.database.entitiy.UserEntity
-import dev.ctsetera.composetest.ui.model.UserModel
+import dev.ctsetera.composetest.database.AppDatabase
+import dev.ctsetera.composetest.database.entitiy.UserEntity
+import dev.ctsetera.composetest.model.UserModel
 import java.io.ByteArrayOutputStream
 
 

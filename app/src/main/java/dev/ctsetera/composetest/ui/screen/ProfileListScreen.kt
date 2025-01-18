@@ -38,9 +38,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.ctsetera.composetest.R
-import dev.ctsetera.composetest.ui.model.UserModel
+import dev.ctsetera.composetest.model.UserModel
 import dev.ctsetera.composetest.ui.theme.ComposeTestTheme
-import dev.ctsetera.composetest.ui.viewmodel.ProfileListViewModel
+import dev.ctsetera.composetest.viewmodel.ProfileListViewModel
 
 @Composable
 fun ProfileListScreen() {

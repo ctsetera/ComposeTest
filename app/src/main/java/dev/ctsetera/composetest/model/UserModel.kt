@@ -1,4 +1,4 @@
-package dev.ctsetera.composetest.ui.model
+package dev.ctsetera.composetest.model
 
 import android.graphics.Bitmap
 

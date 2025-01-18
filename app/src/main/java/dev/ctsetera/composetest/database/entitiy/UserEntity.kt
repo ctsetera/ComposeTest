@@ -1,4 +1,4 @@
-package dev.ctsetera.composetest.ui.database.entitiy
+package dev.ctsetera.composetest.database.entitiy
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
